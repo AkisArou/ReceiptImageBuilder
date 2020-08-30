@@ -15,6 +15,6 @@ export interface IReceiptBuilder<T> {
     addParagraph(): this;
     addLine(size?: number): this;
     getHeight(): number;
-    buildImage(): Promise<T>;
+    buildHTMLImage(): Promise<T>;
 }
 //# sourceMappingURL=IReceiptBuilder.d.ts.map

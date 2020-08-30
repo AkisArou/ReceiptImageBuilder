@@ -39,7 +39,7 @@ export declare class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageEle
     setMarginTop(margin: number): this;
     setTextSize(textSize: number): this;
     setImageQuality(quality: number): this;
-    buildImage(type?: ImageType): Promise<HTMLImageElement>;
+    buildHTMLImage(type?: ImageType): Promise<HTMLImageElement>;
     getRawData(type?: ImageType): Promise<string>;
 }
 //# sourceMappingURL=ReceiptImageBuilder.d.ts.map
