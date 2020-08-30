@@ -28,6 +28,7 @@ export declare class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageEle
     private textSize;
     private width;
     constructor(width: number);
+    addImage(imageUrl: string): this;
     private addEmptyElement;
     private makeNewRow;
     addBlankSpace(height: number): this;
@@ -47,8 +48,9 @@ export declare class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageEle
     setPaddingTop(padding: number): this;
     setTextSize(textSize: number): this;
     setImageQuality(quality: number): this;
+    private buildHTMLElement;
     buildImage(type?: ImageType): Promise<HTMLImageElement>;
     getRawData(type?: ImageType): Promise<string>;
-    addImage(imageUrl: string): this;
+    getPixelData(): Promise<Uint8ClampedArray>;
 }
 //# sourceMappingURL=ReceiptImageBuilder.d.ts.map

@@ -10,8 +10,8 @@ export enum Alignment {
 }
 
 export enum FontWeight {
-    Normal= "400",
-    Bold= "bold"
+    Normal = "400",
+    Bold = "bold"
 }
 
 export enum ImageType {
@@ -47,6 +47,23 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     constructor(width: number) {
         this.width = width;
         this.makeNewRow();
+    }
+
+
+    addImage(imageUrl: string): this {
+        const imageContainer = document.createElement(HTMLElem.Div);
+        imageContainer.style.width = "100%";
+        imageContainer.style.display = "flex";
+        imageContainer.style.justifyContent = "center";
+        imageContainer.style.margin = "10px 0";
+
+        const image = new Image();
+        image.src = imageUrl;
+        image.style.height = "50px";
+        imageContainer.appendChild(image);
+        this.parent.appendChild(imageContainer);
+
+        return this;
     }
 
     private addEmptyElement(height: number, dotted: boolean): this {
@@ -180,6 +197,29 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     }
 
 
+    private buildHTMLElement(): [HTMLDivElement, HTMLDivElement] {
+        const hidden = document.createElement(HTMLElem.Div);
+        hidden.style.opacity = "0";
+        hidden.style.height = "0";
+        hidden.style.width = "0";
+
+        document.body.appendChild(hidden);
+        const shadow = hidden.attachShadow({mode: "open"});
+
+        this.parent.id = this.parentId;
+        this.parent.style.width = makePixel(this.width);
+        this.parent.style.paddingBottom = makePixel(this.paddingBottom);
+        this.parent.style.paddingTop = makePixel(this.paddingTop);
+        this.parent.style.paddingRight = makePixel(this.paddingRight);
+        this.parent.style.paddingLeft = makePixel(this.paddingLeft);
+        this.parent.style.backgroundColor = this.backgroundColor;
+
+        shadow.appendChild(this.parent);
+        const el = shadow.getElementById(this.parentId) as HTMLDivElement;
+        return [el, hidden];
+    }
+
+
     /*
     * Can set image type (PNG, JPEG). Defaults to PNG.
     * Returns Promise with HTMLImageElement.
@@ -199,30 +239,12 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     * Returns Promise with a PNG image base64-encoded data URL, a compressed JPEG image.
     * */
     getRawData(type: ImageType = ImageType.PNG): Promise<string> {
-        const hidden = document.createElement(HTMLElem.Div);
-        hidden.style.opacity = "0";
-        hidden.style.height = "0";
-        hidden.style.width = "0";
-
-        document.body.appendChild(hidden);
-        const shadow = hidden.attachShadow({mode: "open"});
-
-        this.parent.id = this.parentId;
-        this.parent.style.width = makePixel(this.width);
-        this.parent.style.paddingBottom = makePixel(this.paddingBottom);
-        this.parent.style.paddingTop = makePixel(this.paddingTop);
-        this.parent.style.paddingRight = makePixel(this.paddingRight);
-        this.parent.style.paddingLeft = makePixel(this.paddingLeft);
-        this.parent.style.backgroundColor = this.backgroundColor;
-
-        shadow.appendChild(this.parent);
-        const el = shadow.getElementById(this.parentId) as HTMLDivElement;
         const options: htmlToImage.OptionsType = {quality: this.imageQuality};
+        const [el, hidden] = this.buildHTMLElement();
 
         const imageDataPromise = type === ImageType.JPEG
             ? htmlToImage.toJpeg(el, options)
             : htmlToImage.toPng(el, options);
-
 
 
         return imageDataPromise.then(rawData => {
@@ -232,20 +254,15 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
         });
     }
 
-    addImage(imageUrl: string): this {
-        const imageContainer = document.createElement(HTMLElem.Div);
-        imageContainer.style.width = "100%";
-        imageContainer.style.display = "flex";
-        imageContainer.style.justifyContent = "center";
-        imageContainer.style.margin = "10px 0";
-
-        const image = new Image();
-        image.src = imageUrl;
-        image.style.height = "50px";
-        imageContainer.appendChild(image);
-        this.parent.appendChild(imageContainer);
-
-        return this;
+    getPixelData(): Promise<Uint8ClampedArray> {
+        const [el, hidden] = this.buildHTMLElement();
+        return htmlToImage
+            .toPixelData(el)
+            .then(rawData => {
+                el.remove();
+                hidden.remove();
+                return rawData;
+            });
     }
 }
 
