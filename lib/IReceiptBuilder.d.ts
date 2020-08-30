@@ -1,5 +1,5 @@
-import { Alignment } from "./ReceiptBuilder";
-export interface IReceiptBuilder {
+import { Alignment } from "./ReceiptImageBuilder";
+export interface IReceiptBuilder<T> {
     setTextSize(textSize: number): this;
     setBackgroundColor(backgroundColor: string): this;
     setColor(color: string): this;
@@ -15,6 +15,6 @@ export interface IReceiptBuilder {
     addParagraph(): this;
     addLine(size?: number): this;
     getHeight(): number;
-    build(): Promise<HTMLImageElement>;
+    build(): Promise<T>;
 }
 //# sourceMappingURL=IReceiptBuilder.d.ts.map

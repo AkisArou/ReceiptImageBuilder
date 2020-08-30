@@ -4,7 +4,7 @@ export declare enum Alignment {
     Center = "center",
     Right = "right"
 }
-export declare class ReceiptBuilder implements IReceiptBuilder {
+export declare class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     private readonly parent;
     private readonly parentId;
     private align;
@@ -35,4 +35,4 @@ export declare class ReceiptBuilder implements IReceiptBuilder {
     setTextSize(textSize: number): this;
     build(): Promise<HTMLImageElement>;
 }
-//# sourceMappingURL=ReceiptBuilder.d.ts.map
+//# sourceMappingURL=ReceiptImageBuilder.d.ts.map

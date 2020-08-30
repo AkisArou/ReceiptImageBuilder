@@ -17,7 +17,7 @@ enum HTMLElem {
 }
 
 
-export class ReceiptBuilder implements IReceiptBuilder {
+export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     private readonly parent = document.createElement(HTMLElem.Div);
     private readonly parentId = "ReceiptBuilderParentIdNeetbit";
 

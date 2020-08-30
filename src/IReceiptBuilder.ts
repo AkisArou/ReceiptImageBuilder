@@ -1,6 +1,6 @@
-import {Alignment} from "./ReceiptBuilder";
+import {Alignment} from "./ReceiptImageBuilder";
 
-export interface IReceiptBuilder {
+export interface IReceiptBuilder<T> {
     //     public ReceiptBuilder(int width) {
 //     this.width = width;
 // }
@@ -204,5 +204,5 @@ export interface IReceiptBuilder {
 
 
 
-    build(): Promise<HTMLImageElement>
+    build(): Promise<T>
 }
