@@ -1,0 +1,19 @@
+{
+  "name": "receiptbuilder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel example/index.html",
+    "build": "tsc -p ."
+  },
+  "author": "AkisARou",
+  "license": "ISC",
+  "dependencies": {
+    "html-to-image": "^0.1.1"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^4.0.2"
+  }
+}
