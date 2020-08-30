@@ -1,1 +1,1 @@
-export {ReceiptImageBuilder, Alignment, ImageType} from "./ReceiptImageBuilder";
+export {ReceiptImageBuilder, Alignment, ImageType, FontWeight} from "./ReceiptImageBuilder";
