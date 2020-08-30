@@ -4,9 +4,14 @@ export declare enum Alignment {
     Center = "center",
     Right = "right"
 }
+export declare enum ImageType {
+    PNG = 0,
+    JPEG = 1
+}
 export declare class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     private readonly parent;
     private readonly parentId;
+    private imageQuality;
     private align;
     private backgroundColor;
     private color;
@@ -33,6 +38,8 @@ export declare class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageEle
     setMarginRight(margin: number): this;
     setMarginTop(margin: number): this;
     setTextSize(textSize: number): this;
-    build(): Promise<HTMLImageElement>;
+    setImageQuality(quality: number): this;
+    buildImage(type?: ImageType): Promise<HTMLImageElement>;
+    getRawData(type?: ImageType): Promise<string>;
 }
 //# sourceMappingURL=ReceiptImageBuilder.d.ts.map

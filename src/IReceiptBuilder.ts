@@ -204,5 +204,5 @@ export interface IReceiptBuilder<T> {
 
 
 
-    build(): Promise<T>
+    buildImage(): Promise<T>;
 }

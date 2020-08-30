@@ -10,6 +10,11 @@ export enum Alignment {
     Right = "right"
 }
 
+export enum ImageType {
+    PNG,
+    JPEG
+}
+
 enum HTMLElem {
     Div = "div",
     P = "p",
@@ -21,6 +26,7 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     private readonly parent = document.createElement(HTMLElem.Div);
     private readonly parentId = "ReceiptBuilderParentIdNeetbit";
 
+    private imageQuality = 1;
     private align: Alignment = Alignment.Center;
     private backgroundColor = "white";
     private color = "black";
@@ -30,7 +36,6 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     private marginTop = 0;
     private textSize = 12;
     private width = 600;
-
 
     constructor(width: number) {
         this.width = width;
@@ -121,7 +126,36 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
         return this;
     }
 
-    build(): Promise<HTMLImageElement> {
+
+    /*
+    * A number between 0 and 1 indicating image quality (e.g. 0.92 => 92%) of the JPEG image.
+    * Defaults to 1.0 (100%)
+    * */
+    setImageQuality(quality: number): this {
+        this.imageQuality = quality;
+        return this;
+    }
+
+
+    /*
+    * Can set image type (PNG, JPEG). Defaults to PNG.
+    * Returns Promise with HTMLImageElement.
+    * */
+    buildImage(type: ImageType = ImageType.PNG): Promise<HTMLImageElement> {
+        return this.getRawData(type)
+            .then(dataUrl => {
+                const img = new Image();
+                img.src = dataUrl;
+                return img;
+            });
+    }
+
+
+    /*
+    * Can set image type (PNG, JPEG). Defaults to PNG.
+    * Returns Promise with a PNG image base64-encoded data URL, a compressed JPEG image.
+    * */
+    getRawData(type: ImageType = ImageType.PNG): Promise<string> {
         const hidden = document.createElement(HTMLElem.Div);
         hidden.style.opacity = "0";
         hidden.style.height = "0";
@@ -131,25 +165,28 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
         const shadow = hidden.attachShadow({mode: "open"});
 
         this.parent.id = this.parentId;
+        this.parent.style.height = makePixel(this.getHeight());
+        this.parent.style.width = makePixel(this.width);
         this.parent.style.marginBottom = makePixel(this.marginBottom);
         this.parent.style.marginTop = makePixel(this.marginTop);
         this.parent.style.marginRight = makePixel(this.marginRight);
         this.parent.style.marginLeft = makePixel(this.marginLeft);
         this.parent.style.backgroundColor = this.backgroundColor;
-        this.parent.style.height = makePixel(this.getHeight());
-        this.parent.style.width = makePixel(this.width);
 
         shadow.appendChild(this.parent);
         const el = shadow.getElementById(this.parentId) as HTMLDivElement;
+        const options: htmlToImage.OptionsType = {quality: this.imageQuality};
 
-        return htmlToImage.toPng(el)
-            .then(dataUrl => {
-                el.remove();
-                hidden.remove();
-                const img = new Image();
-                img.src = dataUrl;
-                return img;
-            });
+        const imageDataPromise = type === ImageType.JPEG
+            ? htmlToImage.toJpeg(el, options)
+            : htmlToImage.toPng(el, options);
+
+        return imageDataPromise.then(rawData => {
+            el.remove();
+            hidden.remove();
+            return rawData;
+        });
+
     }
 }
 
