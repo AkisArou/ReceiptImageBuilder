@@ -197,7 +197,28 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     }
 
 
-    private buildHTMLElement(): [HTMLDivElement, HTMLDivElement] {
+
+
+    /*
+    * Can set image type (PNG, JPEG). Defaults to PNG.
+    * Returns Promise with HTMLImageElement.
+    * */
+    getHTMLImage(type: ImageType = ImageType.PNG): Promise<HTMLImageElement> {
+        return this.getRawData(type)
+            .then(dataUrl => {
+                const img = new Image();
+                img.src = dataUrl;
+                return img;
+            });
+    }
+
+
+    /*
+    * Can set image type (PNG, JPEG). Defaults to PNG.
+    * Returns Promise with a PNG image base64-encoded data URL, a compressed JPEG image.
+    * */
+    getRawData(type: ImageType = ImageType.PNG): Promise<string> {
+        const options: htmlToImage.OptionsType = {quality: this.imageQuality};
         const hidden = document.createElement(HTMLElem.Div);
         hidden.style.opacity = "0";
         hidden.style.height = "0";
@@ -216,31 +237,6 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
 
         shadow.appendChild(this.parent);
         const el = shadow.getElementById(this.parentId) as HTMLDivElement;
-        return [el, hidden];
-    }
-
-
-    /*
-    * Can set image type (PNG, JPEG). Defaults to PNG.
-    * Returns Promise with HTMLImageElement.
-    * */
-    buildImage(type: ImageType = ImageType.PNG): Promise<HTMLImageElement> {
-        return this.getRawData(type)
-            .then(dataUrl => {
-                const img = new Image();
-                img.src = dataUrl;
-                return img;
-            });
-    }
-
-
-    /*
-    * Can set image type (PNG, JPEG). Defaults to PNG.
-    * Returns Promise with a PNG image base64-encoded data URL, a compressed JPEG image.
-    * */
-    getRawData(type: ImageType = ImageType.PNG): Promise<string> {
-        const options: htmlToImage.OptionsType = {quality: this.imageQuality};
-        const [el, hidden] = this.buildHTMLElement();
 
         const imageDataPromise = type === ImageType.JPEG
             ? htmlToImage.toJpeg(el, options)
@@ -252,17 +248,6 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
             hidden.remove();
             return rawData;
         });
-    }
-
-    getPixelData(): Promise<Uint8ClampedArray> {
-        const [el, hidden] = this.buildHTMLElement();
-        return htmlToImage
-            .toPixelData(el)
-            .then(rawData => {
-                el.remove();
-                hidden.remove();
-                return rawData;
-            });
     }
 }
 

@@ -16,6 +16,6 @@ export interface IReceiptBuilder<T> {
     addLine(size?: number): this;
     setFontWeight(fontWeight: FontWeight): this;
     addImage(imageUrl: string): this;
-    buildImage(): void;
+    getHTMLImage(): void;
 }
 //# sourceMappingURL=IReceiptBuilder.d.ts.map
