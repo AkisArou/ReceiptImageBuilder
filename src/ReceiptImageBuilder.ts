@@ -55,6 +55,7 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
         imageContainer.style.width = "100%";
         imageContainer.style.display = "flex";
         imageContainer.style.justifyContent = "center";
+        imageContainer.style.boxSizing = "border-box";
         imageContainer.style.margin = "10px 0";
 
         const image = new Image();
@@ -77,8 +78,11 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     private makeNewRow() {
         this.row = document.createElement(HTMLElem.Div) as HTMLDivElement;
         this.row.style.display = "grid";
+        this.row.style.boxSizing = "border-box";
         this.row.style.gridTemplateColumns = "repeat(3, auto)";
         this.row.style.gridGap = makePixel(10);
+        this.row.style.margin = "0";
+        this.row.style.padding = "0";
     }
 
     addBlankSpace(height: number): this {
@@ -106,22 +110,21 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
         p.style.color = this.color;
         p.style.fontSize = makePixel(this.textSize);
         p.style.fontWeight = this.fontWeight;
+        p.style.padding = "0";
+        p.style.margin = `${makePixel(6)} 0`;
 
         switch (this.align) {
             case Alignment.Left:
                 p.style.gridColumn = "1/2";
-                p.style.justifySelf = "start"
-
+                p.style.textAlign = "left";
                 break;
             case Alignment.Center:
                 p.style.gridColumn = "2/3";
-                p.style.justifySelf = "center";
-
+                p.style.textAlign = "center"
                 break;
             case Alignment.Right:
                 p.style.gridColumn = "3/4";
-                p.style.justifySelf = "end"
-
+                p.style.textAlign = "right"
                 break;
         }
 
@@ -224,11 +227,14 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
         hidden.style.height = "0";
         hidden.style.width = "0";
 
+
         document.body.appendChild(hidden);
         const shadow = hidden.attachShadow({mode: "open"});
 
         this.parent.id = this.parentId;
         this.parent.style.width = makePixel(this.width);
+        this.parent.style.margin = "0";
+        this.parent.style.boxSizing = "border-box";
         this.parent.style.paddingBottom = makePixel(this.paddingBottom);
         this.parent.style.paddingTop = makePixel(this.paddingTop);
         this.parent.style.paddingRight = makePixel(this.paddingRight);
