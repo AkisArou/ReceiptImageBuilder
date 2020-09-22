@@ -200,13 +200,35 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     }
 
 
+    private makeParentPrintReady() {
+        this.parent.id = this.parentId;
+        this.parent.style.width = makePixel(this.width);
+        this.parent.style.margin = "0";
+        this.parent.style.boxSizing = "border-box";
+        this.parent.style.paddingBottom = makePixel(this.paddingBottom);
+        this.parent.style.paddingTop = makePixel(this.paddingTop);
+        this.parent.style.paddingRight = makePixel(this.paddingRight);
+        this.parent.style.paddingLeft = makePixel(this.paddingLeft);
+        this.parent.style.backgroundColor = this.backgroundColor;
+    }
 
+
+    /*
+    * Appends parent straight to the document.
+    * Must implement CSS @media print to manipulate and hide the rest document elements.
+    * TODO: Check CSS properties for parent visibility, if interferes with other build methods.
+    * */
+    public generatePrintableElement() {
+        this.makeParentPrintReady();
+        document.body.appendChild(this.parent);
+        return () => this.parent.remove();
+    }
 
     /*
     * Can set image type (PNG, JPEG). Defaults to PNG.
     * Returns Promise with HTMLImageElement.
     * */
-    getHTMLImage(type: ImageType = ImageType.PNG): Promise<HTMLImageElement> {
+    public getHTMLImage(type: ImageType = ImageType.PNG): Promise<HTMLImageElement> {
         return this.getRawData(type)
             .then(dataUrl => {
                 const img = new Image();
@@ -220,7 +242,7 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
     * Can set image type (PNG, JPEG). Defaults to PNG.
     * Returns Promise with a PNG image base64-encoded data URL, a compressed JPEG image.
     * */
-    getRawData(type: ImageType = ImageType.PNG): Promise<string> {
+    public getRawData(type: ImageType = ImageType.PNG): Promise<string> {
         const options: htmlToImage.OptionsType = {quality: this.imageQuality};
         const hidden = document.createElement(HTMLElem.Div);
         hidden.style.opacity = "0";
@@ -231,15 +253,7 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
         document.body.appendChild(hidden);
         const shadow = hidden.attachShadow({mode: "open"});
 
-        this.parent.id = this.parentId;
-        this.parent.style.width = makePixel(this.width);
-        this.parent.style.margin = "0";
-        this.parent.style.boxSizing = "border-box";
-        this.parent.style.paddingBottom = makePixel(this.paddingBottom);
-        this.parent.style.paddingTop = makePixel(this.paddingTop);
-        this.parent.style.paddingRight = makePixel(this.paddingRight);
-        this.parent.style.paddingLeft = makePixel(this.paddingLeft);
-        this.parent.style.backgroundColor = this.backgroundColor;
+        this.makeParentPrintReady();
 
         shadow.appendChild(this.parent);
         const el = shadow.getElementById(this.parentId) as HTMLDivElement;

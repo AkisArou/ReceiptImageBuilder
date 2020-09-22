@@ -48,6 +48,8 @@ export declare class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageEle
     setPaddingTop(padding: number): this;
     setTextSize(textSize: number): this;
     setImageQuality(quality: number): this;
+    private makeParentPrintReady;
+    generatePrintableElement(): () => void;
     getHTMLImage(type?: ImageType): Promise<HTMLImageElement>;
     getRawData(type?: ImageType): Promise<string>;
 }
