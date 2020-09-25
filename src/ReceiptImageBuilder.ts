@@ -112,7 +112,7 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
         p.style.fontSize = makePixel(this.textSize);
         p.style.fontWeight = this.fontWeight;
         p.style.padding = "0";
-        p.style.margin = `${makePixel(6)} 0`;
+        p.style.margin = "0";
 
         switch (this.align) {
             case Alignment.Left:
@@ -125,7 +125,7 @@ export class ReceiptImageBuilder implements IReceiptBuilder<HTMLImageElement> {
                 break;
             case Alignment.Right:
                 p.style.gridColumn = "3/4";
-                p.style.textAlign = "right"
+                p.style.textAlign = "right";
                 break;
         }
 
