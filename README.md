@@ -1,0 +1,2 @@
+# ReceiptImageBuilder
+ElectronJS receipt builder
